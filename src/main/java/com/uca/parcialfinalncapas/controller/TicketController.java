@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -20,14 +21,18 @@ import org.springframework.web.bind.annotation.*;
 public class TicketController {
     private TicketService ticketService;
 
+    // Solo TECH puede ver todos los tickets, USER vera solo sus tickets en el servicio
     @GetMapping
+    @PreAuthorize("hasRole('USER') or hasRole('TECH')")
     public ResponseEntity<GeneralResponse> getAllTickets() {
         return ResponseBuilderUtil.buildResponse("Tickets obtenidos correctamente",
                 ticketService.getAllTickets().isEmpty() ? HttpStatus.BAD_REQUEST : HttpStatus.OK,
                 ticketService.getAllTickets());
     }
 
+    // USER puede ver sus tickets, TECH puede ver cualquier ticket
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('USER') or hasRole('TECH')")
     public ResponseEntity<GeneralResponse> getTicketById(@PathVariable Long id) {
         TicketResponse ticket = ticketService.getTicketById(id);
         if (ticket == null) {
@@ -36,19 +41,25 @@ public class TicketController {
         return ResponseBuilderUtil.buildResponse("Ticket found", HttpStatus.OK, ticket);
     }
 
+    // USER puede crear tickets
     @PostMapping
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<GeneralResponse> createTicket(@Valid @RequestBody TicketCreateRequest ticket) {
         TicketResponse createdTicket = ticketService.createTicket(ticket);
         return ResponseBuilderUtil.buildResponse("Ticket creado correctamente", HttpStatus.CREATED, createdTicket);
     }
 
+    // Solo TECH puede actualizar tickets
     @PutMapping
+    @PreAuthorize("hasRole('TECH')")
     public ResponseEntity<GeneralResponse> updateTicket(@Valid @RequestBody TicketUpdateRequest ticket) {
         TicketResponse updatedTicket = ticketService.updateTicket(ticket);
         return ResponseBuilderUtil.buildResponse("Ticket actualizado correctamente", HttpStatus.OK, updatedTicket);
     }
 
+    // Solo TECH puede eliminar tickets
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('TECH')")
     public ResponseEntity<GeneralResponse> deleteTicket(@PathVariable Long id) {
         ticketService.deleteTicket(id);
         return ResponseBuilderUtil.buildResponse("Ticket eliminado correctamente", HttpStatus.OK, null);
