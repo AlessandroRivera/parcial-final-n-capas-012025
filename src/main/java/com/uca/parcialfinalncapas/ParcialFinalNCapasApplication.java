@@ -1,0 +1,13 @@
+package com.uca.parcialfinalncapas;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class ParcialFinalNCapasApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(ParcialFinalNCapasApplication.class, args);
+    }
+
+}

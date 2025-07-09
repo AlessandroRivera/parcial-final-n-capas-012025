@@ -1,0 +1,405 @@
+{
+  "name": "Parcial Final N-Capas",
+  "version": "1",
+  "items": [
+    {
+      "type": "folder",
+      "name": "Tickets",
+      "filename": "Tickets",
+      "seq": 1,
+      "root": {
+        "meta": {
+          "name": "Tickets",
+          "seq": 1
+        }
+      },
+      "items": [
+        {
+          "type": "http",
+          "name": "Delete Ticket",
+          "filename": "Delete Ticket.bru",
+          "seq": 7,
+          "request": {
+            "url": "{{baseUrl}}/api/tickets/1",
+            "method": "DELETE",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "none"
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Get All Tickets",
+          "filename": "Get All Tickets.bru",
+          "seq": 1,
+          "request": {
+            "url": "{{baseUrl}}/api/tickets",
+            "method": "GET",
+            "headers": [
+              {
+                "name": "Country",
+                "value": "{{country}}",
+                "enabled": false
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJqYW5lc21pdGgiLCJpYXQiOjE3NDk4NzY1MjIsImV4cCI6MTc0OTg4MDEyMn0.gtjZrz0xAnyZ6zdSodOfH9ScEmDIh9hxW2lAtRNoxGsVNYnIWPO_YD79b1wdg42r"
+              }
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Save Ticket",
+          "filename": "Save Ticket.bru",
+          "seq": 5,
+          "request": {
+            "url": "{{baseUrl}}/api/tickets",
+            "method": "POST",
+            "headers": [
+              {
+                "name": "Country",
+                "value": "{{country}}",
+                "enabled": false
+              }
+            ],
+            "params": [
+              {
+                "name": "id",
+                "value": "9",
+                "type": "query",
+                "enabled": false
+              }
+            ],
+            "body": {
+              "mode": "json",
+              "json": "{\n  \"titulo\": \"Ticket-06\",\n  \"descripcion\": \"No me funciona encender la compu auxilio\",\n  \"correoUsuario\": \"ldarevalo@uca.edu.sv\",\n  \"correoSoporte\": \"dhurtado@uca.edu.sv\"\n}",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "none"
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Get Ticket By ID",
+          "filename": "Get Ticket By ID.bru",
+          "seq": 4,
+          "request": {
+            "url": "{{baseUrl}}/api/tickets/1",
+            "method": "GET",
+            "headers": [
+              {
+                "name": "Country",
+                "value": "{{country}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "basic",
+              "basic": {
+                "username": "",
+                "password": ""
+              }
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Update Ticket",
+          "filename": "Update Ticket.bru",
+          "seq": 6,
+          "request": {
+            "url": "{{baseUrl}}/api/tickets",
+            "method": "PUT",
+            "headers": [],
+            "params": [
+              {
+                "name": "id",
+                "value": "9",
+                "type": "query",
+                "enabled": false
+              }
+            ],
+            "body": {
+              "mode": "json",
+              "json": "{\n    \"id\": 6,\n    \"descripcion\": \"Trabajando en eso\",\n    \"estado\": \"IN_PROGRESS\",\n    \"correoSoporte\": \"dhurtado@uca.edu.sv\"\n}",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "none"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "folder",
+      "name": "User",
+      "filename": "User",
+      "seq": 2,
+      "root": {
+        "meta": {
+          "name": "User",
+          "seq": 2
+        }
+      },
+      "items": [
+        {
+          "type": "http",
+          "name": "Get All Users",
+          "filename": "Get All Users.bru",
+          "seq": 1,
+          "request": {
+            "url": "{{baseUrl}}/api/users/all",
+            "method": "GET",
+            "headers": [
+              {
+                "name": "Country",
+                "value": "{{country}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "none"
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Delete User",
+          "filename": "Delete User.bru",
+          "seq": 6,
+          "request": {
+            "url": "{{baseUrl}}/api/users/1",
+            "method": "DELETE",
+            "headers": [
+              {
+                "name": "Country",
+                "value": "{{country}}",
+                "enabled": false
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "none"
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Update User",
+          "filename": "Update User.bru",
+          "seq": 5,
+          "request": {
+            "url": "{{baseUrl}}/api/users",
+            "method": "PUT",
+            "headers": [
+              {
+                "name": "Country",
+                "value": "{{country}}",
+                "enabled": false
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "{\n  \"id\": 1,\n  \"nombre\": \"Luisa Arevalo\",\n  \"correo\": \"ldarevalo@uca.edu.sv\",\n  \"password\": \"password123\",\n  \"nombreRol\": \"USER\"\n}",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "none"
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Get User By Email",
+          "filename": "Get User By Email.bru",
+          "seq": 3,
+          "request": {
+            "url": "{{baseUrl}}/api/users/ldarevalo@uca.edu.sv",
+            "method": "GET",
+            "headers": [
+              {
+                "name": "Country",
+                "value": "{{country}}",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "none"
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Save User",
+          "filename": "Save User.bru",
+          "seq": 4,
+          "request": {
+            "url": "{{baseUrl}}/api/users",
+            "method": "POST",
+            "headers": [
+              {
+                "name": "Country",
+                "value": "{{country}}",
+                "enabled": false
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "{\n  \"nombre\": \"David Hurtado\",\n  \"correo\": \"dhurtado@uca.edu.sv\",\n  \"password\": \"password456\",\n  \"nombreRol\": \"TECH\"\n}",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "none"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "activeEnvironmentUid": "LwDIxLyDwGoS0C9UtWEiW",
+  "environments": [
+    {
+      "variables": [
+        {
+          "name": "baseUrl",
+          "value": "http://localhost:8080",
+          "enabled": true,
+          "secret": false,
+          "type": "text"
+        }
+      ],
+      "name": "LOCAL"
+    }
+  ],
+  "root": {
+    "request": {
+      "auth": {
+        "mode": "none"
+      }
+    },
+    "meta": {
+      "name": "Employee Example N-Capas Copy"
+    }
+  },
+  "brunoConfig": {
+    "version": "1",
+    "name": "Parcial Final N-Capas",
+    "type": "collection",
+    "ignore": [
+      "node_modules",
+      ".git"
+    ]
+  }
+}
