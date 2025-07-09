@@ -13,6 +13,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -21,30 +23,49 @@ import org.springframework.web.bind.annotation.*;
 public class TicketController {
     private TicketService ticketService;
 
-    // Solo TECH puede ver todos los tickets, USER vera solo sus tickets en el servicio
+    // TECH ve todos los tickets, USER ve solo sus tickets
     @GetMapping
     @PreAuthorize("hasRole('USER') or hasRole('TECH')")
     public ResponseEntity<GeneralResponse> getAllTickets() {
+        // Obtener usuario autenticado
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String correoUsuario = authentication.getName();
+        
+        // Obtener tickets segun el rol del usuario
+        var tickets = ticketService.getTicketsByUserRole(correoUsuario);
+        
         return ResponseBuilderUtil.buildResponse("Tickets obtenidos correctamente",
-                ticketService.getAllTickets().isEmpty() ? HttpStatus.BAD_REQUEST : HttpStatus.OK,
-                ticketService.getAllTickets());
+                tickets.isEmpty() ? HttpStatus.NO_CONTENT : HttpStatus.OK,
+                tickets);
     }
 
     // USER puede ver sus tickets, TECH puede ver cualquier ticket
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('USER') or hasRole('TECH')")
     public ResponseEntity<GeneralResponse> getTicketById(@PathVariable Long id) {
-        TicketResponse ticket = ticketService.getTicketById(id);
-        if (ticket == null) {
-            throw new BadTicketRequestException("Ticket no encontrado");
-        }
-        return ResponseBuilderUtil.buildResponse("Ticket found", HttpStatus.OK, ticket);
+        // Obtener usuario autenticado
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String correoUsuario = authentication.getName();
+        
+        // Obtener ticket con validacion de permisos
+        TicketResponse ticket = ticketService.getTicketByIdWithUserValidation(id, correoUsuario);
+        
+        return ResponseBuilderUtil.buildResponse("Ticket encontrado", HttpStatus.OK, ticket);
     }
 
-    // USER puede crear tickets
+    // USER puede crear tickets, validar que el correo solicitante coincida con el usuario autenticado
     @PostMapping
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<GeneralResponse> createTicket(@Valid @RequestBody TicketCreateRequest ticket) {
+        // Obtener usuario autenticado
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String correoUsuario = authentication.getName();
+        
+        // Validar que el usuario solo pueda crear tickets para si mismo
+        if (!correoUsuario.equals(ticket.getCorreoUsuario())) {
+            throw new BadTicketRequestException("Solo puedes crear tickets para tu propio usuario");
+        }
+        
         TicketResponse createdTicket = ticketService.createTicket(ticket);
         return ResponseBuilderUtil.buildResponse("Ticket creado correctamente", HttpStatus.CREATED, createdTicket);
     }

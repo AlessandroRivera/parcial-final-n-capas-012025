@@ -96,4 +96,51 @@ public class TicketServiceImpl implements TicketService {
     public List<TicketResponseList> getAllTickets() {
         return TicketMapper.toDTOList(ticketRepository.findAll());
     }
+
+    @Override
+    public List<TicketResponseList> getTicketsByUserRole(String correoUsuario) {
+        // Buscar usuario por correo
+        User usuario = userRepository.findByCorreo(correoUsuario)
+                .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado: " + correoUsuario));
+
+        // Si es TECH, retornar todos los tickets
+        if (Rol.TECH.getValue().equals(usuario.getNombreRol())) {
+            return TicketMapper.toDTOList(ticketRepository.findAll());
+        }
+        
+        // Si es USER, retornar solo sus tickets
+        if (Rol.USER.getValue().equals(usuario.getNombreRol())) {
+            List<Ticket> userTickets = ticketRepository.findByUsuarioId(usuario.getId());
+            return TicketMapper.toDTOList(userTickets);
+        }
+
+        // Si no tiene rol valido, retornar lista vacia
+        return List.of();
+    }
+
+    @Override
+    public TicketResponse getTicketByIdWithUserValidation(Long id, String correoUsuario) {
+        // Buscar ticket
+        Ticket ticketExistente = ticketRepository.findById(id)
+                .orElseThrow(() -> new TicketNotFoundException("Ticket no encontrado con ID: " + id));
+
+        // Buscar usuario autenticado
+        User usuarioAutenticado = userRepository.findByCorreo(correoUsuario)
+                .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado: " + correoUsuario));
+
+        // Si es TECH, puede ver cualquier ticket
+        if (Rol.TECH.getValue().equals(usuarioAutenticado.getNombreRol())) {
+            return getTicketById(id);
+        }
+
+        // Si es USER, solo puede ver sus propios tickets
+        if (Rol.USER.getValue().equals(usuarioAutenticado.getNombreRol())) {
+            if (!ticketExistente.getUsuarioId().equals(usuarioAutenticado.getId())) {
+                throw new BadTicketRequestException("No tienes permisos para ver este ticket");
+            }
+            return getTicketById(id);
+        }
+
+        throw new BadTicketRequestException("Rol de usuario no valido");
+    }
 }

@@ -19,17 +19,17 @@ public class DataInitializer implements CommandLineRunner {
         if (userRepository.count() == 0) {
             // Usuario con rol USER
             User user1 = User.builder()
-                    .nombre("Juan Perez")
-                    .correo("user@test.com")
-                    .password("password123")
+                    .nombre("Eduardo Rivera")
+                    .correo("eduardorivera@uca.edu.sv")
+                    .password("Password123")
                     .nombreRol(Rol.USER.getValue())
                     .build();
 
             // Usuario con rol TECH
             User user2 = User.builder()
-                    .nombre("Maria Garcia")
-                    .correo("tech@test.com")
-                    .password("password123")
+                    .nombre("Ronald Sanchez")
+                    .correo("ronaldsanchez@uca.edu.sv")
+                    .password("Password123")
                     .nombreRol(Rol.TECH.getValue())
                     .build();
 

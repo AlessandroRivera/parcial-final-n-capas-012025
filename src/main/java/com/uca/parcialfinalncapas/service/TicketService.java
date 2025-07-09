@@ -45,4 +45,15 @@ public interface TicketService {
      * @return una lista de todos los tickets
      */
     List<TicketResponseList> getAllTickets();
+    List<TicketResponseList> getTicketsByUserRole(String correoUsuario);
+
+    /**
+     * Obtiene un ticket por ID validando permisos de usuario.
+     * USER: solo sus tickets, TECH: cualquier ticket
+     *
+     * @param id ID del ticket
+     * @param correoUsuario correo del usuario autenticado
+     * @return ticket si tiene permisos para verlo
+     */
+    TicketResponse getTicketByIdWithUserValidation(Long id, String correoUsuario);
 }

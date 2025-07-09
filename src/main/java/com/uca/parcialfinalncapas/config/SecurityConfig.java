@@ -33,9 +33,9 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)  // Deshabilitar CSRF para API REST
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))  // Sin sesiones
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/login").permitAll()  // Permitir acceso al login sin autenticacion
-                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()  // Permitir acceso a Swagger
-                        .anyRequest().authenticated()  // Todas las demas rutas requieren autenticacion
+                        .requestMatchers("/auth/login").permitAll() 
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()  
+                        .anyRequest().authenticated()  
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);  // Agregar filtro JWT
 

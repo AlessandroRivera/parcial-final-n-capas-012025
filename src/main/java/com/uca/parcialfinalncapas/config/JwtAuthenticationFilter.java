@@ -30,16 +30,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         
         // Validar que el header contenga Bearer token
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            // Si no hay token, continuar sin autenticar
             filterChain.doFilter(request, response);
             return;
         }
-        
-        // Extraer token del header (remover "Bearer " del inicio)
         String token = authHeader.substring(7);
         
         try {
-            // Extraer correo del usuario del token JWT
             String correo = jwtUtil.extractUsername(token);
             
             // Validar que el usuario no este ya autenticado en el contexto
@@ -68,11 +64,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
             
         } catch (Exception e) {
-            // Si hay error en la validacion del token, continuar sin autenticar
             logger.error("Error validando token JWT: " + e.getMessage());
         }
         
-        // Continuar con el siguiente filtro en la cadena
         filterChain.doFilter(request, response);
     }
 } 
