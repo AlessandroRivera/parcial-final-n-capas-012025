@@ -56,4 +56,5 @@ public interface TicketService {
      * @return ticket si tiene permisos para verlo
      */
     TicketResponse getTicketByIdWithUserValidation(Long id, String correoUsuario);
+    TicketResponse updateTicketStatus(Long id, String nuevoEstado);
 }

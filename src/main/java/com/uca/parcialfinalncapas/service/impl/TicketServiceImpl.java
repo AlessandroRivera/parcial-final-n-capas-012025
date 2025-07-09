@@ -13,17 +13,16 @@ import com.uca.parcialfinalncapas.repository.TicketRepository;
 import com.uca.parcialfinalncapas.repository.UserRepository;
 import com.uca.parcialfinalncapas.service.TicketService;
 import com.uca.parcialfinalncapas.utils.enums.Rol;
+import com.uca.parcialfinalncapas.utils.enums.State;
 import com.uca.parcialfinalncapas.utils.mappers.TicketMapper;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- * Esta clase implementa los servicios relacionados con los tickets.
- * Utiliza el TicketRepository para realizar operaciones de acceso a datos.
- */
+
 @Service
 @AllArgsConstructor
 public class TicketServiceImpl implements TicketService {
@@ -142,5 +141,46 @@ public class TicketServiceImpl implements TicketService {
         }
 
         throw new BadTicketRequestException("Rol de usuario no valido");
+    }
+
+    @Override
+    @Transactional
+    public TicketResponse updateTicketStatus(Long id, String nuevoEstado) {
+        // Buscar ticket existente
+        Ticket ticketExistente = ticketRepository.findById(id)
+                .orElseThrow(() -> new TicketNotFoundException("Ticket no encontrado con ID: " + id));
+
+        // Validar que el estado sea valido
+        String estadoFinal;
+        switch (nuevoEstado.toUpperCase()) {
+            case "OPEN":
+                estadoFinal = State.OPEN.getDescription();
+                break;
+            case "IN_PROGRESS":
+                estadoFinal = State.IN_PROGRESS.getDescription();
+                break;
+            case "CLOSED":
+                estadoFinal = State.CLOSED.getDescription();
+                break;
+            default:
+                throw new BadTicketRequestException("Estado no valido: " + nuevoEstado + 
+                    ". Estados permitidos: OPEN, IN_PROGRESS, CLOSED");
+        }
+
+        // Actualizar solo el estado
+        ticketExistente.setEstado(estadoFinal);
+        ticketExistente.setFecha(LocalDateTime.now());
+
+        // Guardar cambios
+        Ticket ticketActualizado = ticketRepository.save(ticketExistente);
+
+        // Obtener usuarios para la respuesta
+        var usuarioSolicitante = userRepository.findById(ticketActualizado.getUsuarioId())
+                .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
+
+        var usuarioSoporte = userRepository.findById(ticketActualizado.getTecnicoAsignadoId())
+                .orElseThrow(() -> new UserNotFoundException("Usuario asignado no encontrado"));
+
+        return TicketMapper.toDTO(ticketActualizado, usuarioSolicitante.getCorreo(), usuarioSoporte.getCorreo());
     }
 }

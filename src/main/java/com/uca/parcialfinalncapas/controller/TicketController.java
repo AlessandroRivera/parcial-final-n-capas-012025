@@ -1,6 +1,7 @@
 package com.uca.parcialfinalncapas.controller;
 
 import com.uca.parcialfinalncapas.dto.request.TicketCreateRequest;
+import com.uca.parcialfinalncapas.dto.request.TicketStatusUpdateRequest;
 import com.uca.parcialfinalncapas.dto.request.TicketUpdateRequest;
 import com.uca.parcialfinalncapas.dto.response.GeneralResponse;
 import com.uca.parcialfinalncapas.dto.response.TicketResponse;
@@ -53,29 +54,44 @@ public class TicketController {
         return ResponseBuilderUtil.buildResponse("Ticket encontrado", HttpStatus.OK, ticket);
     }
 
-    // USER puede crear tickets, validar que el correo solicitante coincida con el usuario autenticado
+    // USER puede crear tickets para si mismo, TECH puede crear tickets para cualquier usuario
     @PostMapping
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('USER') or hasRole('TECH')")
     public ResponseEntity<GeneralResponse> createTicket(@Valid @RequestBody TicketCreateRequest ticket) {
         // Obtener usuario autenticado
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String correoUsuario = authentication.getName();
         
-        // Validar que el usuario solo pueda crear tickets para si mismo
-        if (!correoUsuario.equals(ticket.getCorreoUsuario())) {
-            throw new BadTicketRequestException("Solo puedes crear tickets para tu propio usuario");
+        // Si es USER, validar que solo pueda crear tickets para si mismo
+        if (authentication.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_USER"))) {
+            if (!correoUsuario.equals(ticket.getCorreoUsuario())) {
+                throw new BadTicketRequestException("USER solo puede crear tickets para su propio usuario");
+            }
         }
+        
+        // TECH puede crear tickets para cualquier usuario (sin validacion adicional)
         
         TicketResponse createdTicket = ticketService.createTicket(ticket);
         return ResponseBuilderUtil.buildResponse("Ticket creado correctamente", HttpStatus.CREATED, createdTicket);
     }
 
-    // Solo TECH puede actualizar tickets
+    // Solo TECH puede actualizar tickets (cambiar estado: OPEN, IN_PROGRESS, CLOSED)
     @PutMapping
     @PreAuthorize("hasRole('TECH')")
     public ResponseEntity<GeneralResponse> updateTicket(@Valid @RequestBody TicketUpdateRequest ticket) {
         TicketResponse updatedTicket = ticketService.updateTicket(ticket);
         return ResponseBuilderUtil.buildResponse("Ticket actualizado correctamente", HttpStatus.OK, updatedTicket);
+    }
+
+    // Solo TECH puede cambiar el estado de un ticket (funcionalidad principal segun Parte 4)
+    @PatchMapping("/{id}/status")
+    @PreAuthorize("hasRole('TECH')")
+    public ResponseEntity<GeneralResponse> updateTicketStatus(@PathVariable Long id, 
+                                                            @Valid @RequestBody TicketStatusUpdateRequest statusRequest) {
+        // TECH puede cambiar estado del ticket: OPEN -> IN_PROGRESS -> CLOSED
+        TicketResponse updatedTicket = ticketService.updateTicketStatus(id, statusRequest.getEstado());
+        return ResponseBuilderUtil.buildResponse("Estado del ticket actualizado correctamente", HttpStatus.OK, updatedTicket);
     }
 
     // Solo TECH puede eliminar tickets
