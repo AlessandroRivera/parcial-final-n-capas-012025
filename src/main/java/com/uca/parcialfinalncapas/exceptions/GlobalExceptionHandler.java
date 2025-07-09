@@ -39,6 +39,11 @@ public class GlobalExceptionHandler {
         return ResponseBuilderUtil.buildErrorResponse(e, HttpStatus.UNAUTHORIZED, e.getMessage());
     }
 
+    @ExceptionHandler(JwtException.class)
+    public ResponseEntity<ErrorResponse> handleJwtException(JwtException e) {
+        return ResponseBuilderUtil.buildErrorResponse(e, HttpStatus.UNAUTHORIZED, e.getMessage());
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValueOfEntity(MethodArgumentNotValidException e) {
         List<String> errors = e.getFieldErrors().stream()
