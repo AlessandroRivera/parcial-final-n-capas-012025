@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,7 +23,9 @@ import java.util.List;
 public class UserController {
     private UserService userService;
 
+    // Solo TECH puede ver todos los usuarios
     @GetMapping("/all")
+    @PreAuthorize("hasRole('TECH')")
     public ResponseEntity<GeneralResponse> getAllUsers() {
         List<UserResponse> users = userService.findAll();
 
@@ -33,25 +36,33 @@ public class UserController {
         );
     }
 
+    // Usuario puede ver su propio perfil o TECH puede ver cualquier perfil
     @GetMapping("/{correo}")
+    @PreAuthorize("hasRole('TECH') or authentication.name == #correo")
     public ResponseEntity<GeneralResponse> getUserByCorreo(@PathVariable String correo) {
         UserResponse user = userService.findByCorreo(correo);
         return ResponseBuilderUtil.buildResponse("Usuario encontrado", HttpStatus.OK, user);
     }
 
+    // Solo TECH puede crear nuevos usuarios
     @PostMapping
+    @PreAuthorize("hasRole('TECH')")
     public ResponseEntity<GeneralResponse> createUser(@Valid @RequestBody UserCreateRequest user) {
         UserResponse createdUser = userService.save(user);
         return ResponseBuilderUtil.buildResponse("Usuario creado correctamente", HttpStatus.CREATED, createdUser);
     }
 
+    // Solo TECH puede actualizar usuarios
     @PutMapping
+    @PreAuthorize("hasRole('TECH')")
     public ResponseEntity<GeneralResponse> updateUser(@Valid @RequestBody UserUpdateRequest user) {
         UserResponse updatedUser = userService.update(user);
         return ResponseBuilderUtil.buildResponse("Usuario actualizado correctamente", HttpStatus.OK, updatedUser);
     }
 
+    // Solo TECH puede eliminar usuarios
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('TECH')")
     public ResponseEntity<GeneralResponse> deleteUser(@PathVariable Long id) {
         userService.delete(id);
         return ResponseBuilderUtil.buildResponse("Usuario eliminado correctamente", HttpStatus.OK, null);
