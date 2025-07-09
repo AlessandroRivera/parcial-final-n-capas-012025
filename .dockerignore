@@ -1,0 +1,48 @@
+# Archivos y directorios a ignorar en el build de Docker
+
+# Directorios de compilación
+target/
+build/
+
+# IDEs
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Logs
+*.log
+logs/
+
+# Archivos temporales
+*.tmp
+*.temp
+.tmp/
+
+# Maven wrapper (opcional, ya está incluido en Dockerfile)
+# .mvn/
+# mvnw
+# mvnw.cmd
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Documentación
+README.md
+*.md
+
+# Archivos de configuración local
+application-local.properties
+application-local.yml 
